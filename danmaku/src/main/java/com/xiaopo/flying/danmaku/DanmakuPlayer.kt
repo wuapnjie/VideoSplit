@@ -14,17 +14,29 @@ import java.lang.ref.WeakReference
 /**
  * @author wupanjie
  */
-class DanmakuPlayer(texture: SurfaceTexture, width: Int, height: Int, shaderProgram: DanmakuShaderProgram) : Thread(), OnFrameAvailableListener {
+class DanmakuPlayer(
+    private val previewSurfaceTexture: SurfaceTexture,
+    private val surfaceWidth: Int,
+    private val surfaceHeight: Int,
+    private val shaderProgram: DanmakuShaderProgram
+) : Thread(), OnFrameAvailableListener {
+
+    companion object {
+        private val TAG = DanmakuPlayer::class.java.simpleName
+        private const val THREAD_NAME = "DanmakuPlayer"
+    }
+
     private val lock = Any()
-    private val surfaceWidth: Int
-    private val surfaceHeight: Int
-    private val previewSurfaceTexture: SurfaceTexture
     private var eglCore: EglCore? = null
     private var previewWindowSurface: WindowSurface? = null
     var renderHandler: RenderHandler? = null
         private set
     private var onRendererReadyListener: OnRendererReadyListener? = null
-    private val shaderProgram: DanmakuShaderProgram
+
+
+    init {
+        this.name = THREAD_NAME
+    }
 
     private fun initialize() {
         setViewport(surfaceWidth, surfaceHeight)
@@ -156,18 +168,5 @@ class DanmakuPlayer(texture: SurfaceTexture, width: Int, height: Int, shaderProg
     interface OnRendererReadyListener {
         fun onRendererReady()
         fun onRendererFinished()
-    }
-
-    companion object {
-        private val TAG = DanmakuPlayer::class.java.simpleName
-        private const val THREAD_NAME = "DanmakuPlayer"
-    }
-
-    init {
-        this.name = THREAD_NAME
-        previewSurfaceTexture = texture
-        surfaceWidth = width
-        surfaceHeight = height
-        this.shaderProgram = shaderProgram
     }
 }
