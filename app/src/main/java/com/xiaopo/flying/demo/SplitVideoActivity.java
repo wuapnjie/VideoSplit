@@ -14,20 +14,18 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.xiaopo.flying.demo.layout.OneLayout;
 import com.xiaopo.flying.demo.layout.ThreeLayout;
 import com.xiaopo.flying.demo.layout.TwoLayout;
 import com.xiaopo.flying.demo.utils.FileUtil;
+import com.xiaopo.flying.glkit.filter.NoFilter;
 import com.xiaopo.flying.puzzlekit.PuzzleLayout;
 import com.xiaopo.flying.videosplit.SpiltVideoPlayer;
 import com.xiaopo.flying.videosplit.SplitShaderProgram;
-import com.xiaopo.flying.videosplit.filter.NoFilter;
 import com.xiaopo.flying.videosplit.mix.AVMixingTask;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.PermissionNo;
 import com.yanzhenjie.permission.PermissionYes;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

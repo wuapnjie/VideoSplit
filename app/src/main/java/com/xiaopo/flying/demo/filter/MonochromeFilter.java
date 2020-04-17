@@ -1,8 +1,7 @@
 package com.xiaopo.flying.demo.filter;
 
 import android.opengl.GLES20;
-
-import com.xiaopo.flying.videosplit.filter.AbstractShaderFilter;
+import com.xiaopo.flying.glkit.filter.AbstractShaderFilter;
 
 /**
  * @author wupanjie

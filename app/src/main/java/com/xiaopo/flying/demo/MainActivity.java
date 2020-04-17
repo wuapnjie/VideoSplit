@@ -4,19 +4,14 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 import com.xiaopo.flying.demo.filter.IF1977Filter;
-import com.xiaopo.flying.demo.filter.XprollFilter;
 import com.xiaopo.flying.demo.layout.OneLayout;
 import com.xiaopo.flying.demo.layout.ThreeLayout;
 import com.xiaopo.flying.demo.layout.TwoLayout;
@@ -27,12 +22,10 @@ import com.xiaopo.flying.videosplit.VideoSplicer;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.PermissionNo;
 import com.yanzhenjie.permission.PermissionYes;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
 import me.drakeet.multitype.MultiTypeAdapter;
 
 public class MainActivity extends AppCompatActivity {
@@ -79,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
     videoList.setAdapter(videoAdapter);
 
-    findViewById(R.id.fab_action).setOnClickListener(this::startMix);
+    findViewById(R.id.fab_action).setOnClickListener(this::toSplitVideo);
   }
 
   private void startMix(View view) {

@@ -4,9 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
-
 import com.xiaopo.flying.demo.R;
-import com.xiaopo.flying.videosplit.filter.AbstractShaderFilter;
+import com.xiaopo.flying.glkit.filter.AbstractShaderFilter;
 
 /**
  * @author wupanjie
