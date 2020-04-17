@@ -10,17 +10,17 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
-  @Test
-  public void addition_isCorrect() throws Exception {
-    assertEquals(4, 2 + 2);
-    System.out.println("#extension GL_OES_EGL_image_external : require\n" +
-        "\n" +
-        "precision mediump float;\n" +
-        "varying vec2 vTextureCoord;\n" +
-        "uniform samplerExternalOES uTextureSampler;\n" +
-        "\n" +
-        "void main(){\n" +
-        "  gl_FragColor = texture2D(uTextureSampler,vTextureCoord);\n" +
-        "}");
-  }
+    @Test
+    public void addition_isCorrect() throws Exception {
+        assertEquals(4, 2 + 2);
+        System.out.println("#extension GL_OES_EGL_image_external : require\n" +
+            "\n" +
+            "precision mediump float;\n" +
+            "varying vec2 vTextureCoord;\n" +
+            "uniform samplerExternalOES uTextureSampler;\n" +
+            "\n" +
+            "void main(){\n" +
+            "  gl_FragColor = texture2D(uTextureSampler,vTextureCoord);\n" +
+            "}");
+    }
 }

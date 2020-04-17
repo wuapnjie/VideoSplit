@@ -2,6 +2,7 @@ package com.xiaopo.flying.videosplit.utils;
 
 import android.media.MediaCodec;
 import android.os.Build;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -11,32 +12,32 @@ import java.nio.ByteBuffer;
  */
 public class MediaCodecBufferCompatWrapper {
 
-  private final MediaCodec mediaCodec;
-  private final ByteBuffer[] inputBuffers;
-  private final ByteBuffer[] outputBuffers;
+    private final MediaCodec mediaCodec;
+    private final ByteBuffer[] inputBuffers;
+    private final ByteBuffer[] outputBuffers;
 
-  public MediaCodecBufferCompatWrapper(MediaCodec mediaCodec) {
-    this.mediaCodec = mediaCodec;
+    public MediaCodecBufferCompatWrapper(MediaCodec mediaCodec) {
+        this.mediaCodec = mediaCodec;
 
-    if (Build.VERSION.SDK_INT < 21) {
-      inputBuffers = mediaCodec.getInputBuffers();
-      outputBuffers = mediaCodec.getOutputBuffers();
-    } else {
-      inputBuffers = outputBuffers = null;
+        if (Build.VERSION.SDK_INT < 21) {
+            inputBuffers = mediaCodec.getInputBuffers();
+            outputBuffers = mediaCodec.getOutputBuffers();
+        } else {
+            inputBuffers = outputBuffers = null;
+        }
     }
-  }
 
-  public ByteBuffer getInputBuffer(final int index) {
-    if (Build.VERSION.SDK_INT >= 21) {
-      return mediaCodec.getInputBuffer(index);
+    public ByteBuffer getInputBuffer(final int index) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            return mediaCodec.getInputBuffer(index);
+        }
+        return inputBuffers[index];
     }
-    return inputBuffers[index];
-  }
 
-  public ByteBuffer getOutputBuffer(final int index) {
-    if (Build.VERSION.SDK_INT >= 21) {
-      return mediaCodec.getOutputBuffer(index);
+    public ByteBuffer getOutputBuffer(final int index) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            return mediaCodec.getOutputBuffer(index);
+        }
+        return outputBuffers[index];
     }
-    return outputBuffers[index];
-  }
 }

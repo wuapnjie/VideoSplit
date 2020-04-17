@@ -7,49 +7,49 @@ import android.opengl.GLES20;
  */
 public abstract class ShaderParameter {
 
-  final String name;
-  int handle;
+    final String name;
+    int handle;
 
-  private ShaderParameter(String name) {
-    this.name = name;
-  }
-
-  public int getHandle() {
-    return handle;
-  }
-
-  public static Uniform uniform(final String name) {
-    return new Uniform(name);
-  }
-
-  public static Attribute attribute(final String name) {
-    return new Attribute(name);
-  }
-
-  public abstract void loadHandle(final int program);
-
-  public static final class Uniform extends ShaderParameter {
-
-    private Uniform(String name) {
-      super(name);
+    private ShaderParameter(String name) {
+        this.name = name;
     }
 
-    @Override
-    public void loadHandle(int program) {
-      handle = GLES20.glGetUniformLocation(program, name);
-    }
-  }
-
-  public static final class Attribute extends ShaderParameter {
-
-    private Attribute(String name) {
-      super(name);
+    public int getHandle() {
+        return handle;
     }
 
-    @Override
-    public void loadHandle(int program) {
-      handle = GLES20.glGetAttribLocation(program, name);
+    public static Uniform uniform(final String name) {
+        return new Uniform(name);
     }
-  }
+
+    public static Attribute attribute(final String name) {
+        return new Attribute(name);
+    }
+
+    public abstract void loadHandle(final int program);
+
+    public static final class Uniform extends ShaderParameter {
+
+        private Uniform(String name) {
+            super(name);
+        }
+
+        @Override
+        public void loadHandle(int program) {
+            handle = GLES20.glGetUniformLocation(program, name);
+        }
+    }
+
+    public static final class Attribute extends ShaderParameter {
+
+        private Attribute(String name) {
+            super(name);
+        }
+
+        @Override
+        public void loadHandle(int program) {
+            handle = GLES20.glGetAttribLocation(program, name);
+        }
+    }
 
 }

@@ -1,2 +1,3 @@
+include ':danmaku'
 include ':glkit'
 include ':app', ':videosplit'

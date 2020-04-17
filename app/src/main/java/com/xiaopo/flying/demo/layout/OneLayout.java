@@ -7,7 +7,7 @@ import com.xiaopo.flying.puzzlekit.straight.StraightPuzzleLayout;
  * @author wupanjie
  */
 public class OneLayout extends StraightPuzzleLayout {
-  @Override
-  public void layout() {
-  }
+    @Override
+    public void layout() {
+    }
 }
