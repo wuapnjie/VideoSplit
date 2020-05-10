@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         videoList.setAdapter(videoAdapter);
 
-        findViewById(R.id.fab_action).setOnClickListener(this::toDanmkau);
+        findViewById(R.id.fab_action).setOnClickListener(this::toSplitVideo);
     }
 
     private void startMix(View view) {

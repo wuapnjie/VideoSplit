@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.SurfaceTexture.OnFrameAvailableListener
 import android.opengl.GLES20
 import android.opengl.Matrix
+import com.xiaopo.flying.danmaku.api.INeedRelease
 import com.xiaopo.flying.glkit.filter.NoFilter
 import com.xiaopo.flying.glkit.filter.ShaderFilter
 import com.xiaopo.flying.glkit.gl.BufferUtil
@@ -12,14 +13,24 @@ import com.xiaopo.flying.puzzlekit.PuzzleLayout
 import java.util.*
 
 /**
+ * OpenGl Shader Program
+ *
  * @author wupanjie
  */
-class DanmakuShaderProgram : ShaderProgram() {
+class DanmakuShaderProgram : ShaderProgram(), INeedRelease {
+    companion object {
+        private const val TAG = "DanmakuShaderProgram"
+        private const val COORDS_PER_VERTEX = 2
+        private const val VERTEX_STRIDE = COORDS_PER_VERTEX * FLOAT_SIZE
+        private val vertexCoordinates = floatArrayOf(0f, 0f, 1f, 0f, 0f, 1f, 1f, 1f)
+    }
+
     private var vertexBufferId = 0
     private val projectionMatrix = FloatArray(16)
     private val viewMatrix = FloatArray(16)
 
-    private val danmakuPainters = ArrayList<DanmakuPainter>()
+    private val danmakuPainter = DanmakuPainter()
+    private val danmakuDisplays = ArrayList<DanmakuCanvas>()
     private var puzzleLayout: PuzzleLayout? = null
 
     private val shaderFilters = ArrayList<ShaderFilter>()
@@ -29,20 +40,21 @@ class DanmakuShaderProgram : ShaderProgram() {
     private var colorRed = 0f
     private var colorBlue = 0f
     private var colorGreen = 0f
+    private var colorAlpha = 0f
 
     fun setPuzzleLayout(puzzleLayout: PuzzleLayout) {
         this.puzzleLayout = puzzleLayout
     }
 
     @JvmOverloads
-    fun addPainter(filter: ShaderFilter = noFilter) {
+    fun addDisplay(filter: ShaderFilter = noFilter) {
         val filterClass: Class<out ShaderFilter> = filter.javaClass
         var cached = shaderFilterCache[filterClass]
         if (cached == null) {
             shaderFilterCache[filterClass] = filter
             cached = filter
         }
-        danmakuPainters.add(DanmakuPainter())
+        danmakuDisplays.add(DanmakuCanvas())
         shaderFilters.add(cached)
     }
 
@@ -50,8 +62,8 @@ class DanmakuShaderProgram : ShaderProgram() {
         colorRed = Color.red(backgroundColor) / 255f
         colorBlue = Color.blue(backgroundColor) / 255f
         colorGreen = Color.green(backgroundColor) / 255f
+        colorAlpha = Color.alpha(backgroundColor) / 255f
     }
-
 
     override fun prepare() { // prepare filter
         for (key in shaderFilterCache.keys) {
@@ -59,11 +71,11 @@ class DanmakuShaderProgram : ShaderProgram() {
             filter?.prepare()
         }
         vertexBufferId = uploadBuffer(BufferUtil.storeDataInBuffer(vertexCoordinates))
-        val size = danmakuPainters.size
+        val size = danmakuDisplays.size
         val textureIds = IntArray(size)
         generateTextures(size, textureIds, 0)
         for (i in 0 until size) {
-            danmakuPainters[i].configOutput(textureIds[i])
+            danmakuDisplays[i].configOutput(textureIds[i], viewportWidth, viewportHeight)
         }
         Matrix.setIdentityM(projectionMatrix, 0)
         Matrix.orthoM(projectionMatrix, 0, 0f, viewportWidth.toFloat(), 0f, viewportHeight.toFloat(), -1f, 1f)
@@ -73,13 +85,13 @@ class DanmakuShaderProgram : ShaderProgram() {
         Matrix.scaleM(viewMatrix, 0, 1f, -1f, 1f)
     }
 
-    override fun run() {
+    override fun execute() {
         val puzzleLayout = this.puzzleLayout ?: return
 
-        GLES20.glClearColor(colorRed, colorGreen, colorBlue, 1.0f)
+        GLES20.glClearColor(colorRed, colorGreen, colorBlue, colorAlpha)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         GLES20.glViewport(0, 0, viewportWidth, viewportHeight)
-        val painterCount = danmakuPainters.size
+        val painterCount = danmakuDisplays.size
         for (i in 0 until painterCount) {
             val area = puzzleLayout.getArea(i)
             val filter = shaderFilters[i]
@@ -88,7 +100,7 @@ class DanmakuShaderProgram : ShaderProgram() {
             val textureMatrixHandle = filter.getParameterHandle(ShaderFilter.TEXTURE_MATRIX_UNIFORM)
             val matrixHandle = filter.getParameterHandle(ShaderFilter.MATRIX_UNIFORM)
             filter.bindUniform()
-            val painter = danmakuPainters[i]
+            val painter = danmakuDisplays[i]
             painter.setDisplayArea(area)
             painter.setTexture(textureHandle, textureMatrixHandle)
             painter.setMatrix(matrixHandle, viewMatrix, projectionMatrix)
@@ -101,10 +113,11 @@ class DanmakuShaderProgram : ShaderProgram() {
         for (key in shaderFilterCache.keys) {
             shaderFilterCache[key]?.release()
         }
-        for (DanmakuPainter in danmakuPainters) {
-            DanmakuPainter.release()
+        for (danmakuDisplay in danmakuDisplays) {
+            danmakuDisplay.release()
         }
-        danmakuPainters.clear()
+        danmakuPainter.release()
+        danmakuDisplays.clear()
         shaderFilters.clear()
     }
 
@@ -123,28 +136,23 @@ class DanmakuShaderProgram : ShaderProgram() {
         GLES20.glDisableVertexAttribArray(filter.getParameterHandle(ShaderFilter.POSITION_ATTRIBUTE))
     }
 
-    fun updatePreviewTexture() {
-        for (DanmakuPainter in danmakuPainters) {
-            DanmakuPainter.outputTexture?.updateTexImage()
+    internal fun updatePreviewTexture() {
+        for (danmakuDisplay in danmakuDisplays) {
+            danmakuDisplay.outputTexture?.updateTexImage()
         }
     }
 
-    fun setOnFrameAvailableListener(onFrameAvailableListener: OnFrameAvailableListener?) {
-        for (DanmakuPainter in danmakuPainters) {
-            DanmakuPainter.outputTexture?.setOnFrameAvailableListener(onFrameAvailableListener)
+    internal fun setOnFrameAvailableListener(onFrameAvailableListener: OnFrameAvailableListener?) {
+        for (danmakuDisplay in danmakuDisplays) {
+            danmakuDisplay.outputTexture?.setOnFrameAvailableListener(onFrameAvailableListener)
         }
     }
 
-    fun play() {
-        for (DanmakuPainter in danmakuPainters) {
-            DanmakuPainter.play()
+    internal fun play() {
+        for (danmakuDisplay in danmakuDisplays) {
+            danmakuPainter.bindDisplay(danmakuDisplay)
         }
-    }
 
-    companion object {
-        private const val TAG = "DanmakuShaderProgram"
-        private const val COORDS_PER_VERTEX = 2
-        private const val VERTEX_STRIDE = COORDS_PER_VERTEX * FLOAT_SIZE
-        private val vertexCoordinates = floatArrayOf(0f, 0f, 1f, 0f, 0f, 1f, 1f, 1f)
+        danmakuPainter.startDraw()
     }
 }

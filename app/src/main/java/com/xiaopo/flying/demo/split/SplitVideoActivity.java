@@ -160,6 +160,7 @@ public class SplitVideoActivity extends AppCompatActivity implements
         shaderProgram.setPuzzleLayout(puzzleLayout);
         shaderProgram.setBackgroundColor(Color.parseColor("#532421"));
 
+        surfaceTexture.setDefaultBufferSize(width, height);
         renderer = new SpiltVideoPlayer(surfaceTexture, width, height, shaderProgram);
         renderer.setViewport(width, height);
         renderer.setOnRendererReadyListener(this);

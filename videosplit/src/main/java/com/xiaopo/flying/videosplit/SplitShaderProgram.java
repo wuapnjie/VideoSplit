@@ -153,7 +153,7 @@ public class SplitShaderProgram extends ShaderProgram {
     }
 
     @Override
-    public void run() {
+    public void execute() {
         GLES20.glClearColor(colorRed, colorGreen, colorBlue, 1.0f);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 

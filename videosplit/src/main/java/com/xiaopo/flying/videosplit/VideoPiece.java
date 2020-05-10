@@ -1,5 +1,10 @@
 package com.xiaopo.flying.videosplit;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.media.MediaCodec;
@@ -8,6 +13,7 @@ import android.media.MediaFormat;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.text.TextPaint;
 import android.util.Log;
 import android.view.Surface;
 
@@ -57,6 +63,7 @@ class VideoPiece extends Thread {
     void configOutput(int textureId) {
         this.textureId = textureId;
         outputTexture = new SurfaceTexture(textureId);
+        outputTexture.setDefaultBufferSize(1080, 1080);
         surface = new Surface(outputTexture);
         parseVideoInfo();
 
@@ -200,6 +207,16 @@ class VideoPiece extends Thread {
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
+
+
+//        float i = 0f;
+//        Paint paint = new TextPaint();
+//        paint.setFlags(Paint.ANTI_ALIAS_FLAG);
+//        paint.setColor(Color.BLUE);
+//        paint.setStrokeWidth(5f);
+//        paint.setTextSize(48f);
+//        Rect rect = new Rect();
+
         while (!Thread.interrupted()) {
             //将资源传递到解码器
             try {
@@ -243,6 +260,28 @@ class VideoPiece extends Thread {
                 }
                 break;
             }
+
+//            rect.set(0, 0, 1080, 1080);
+//            Canvas canvas = surface.lockCanvas(rect);
+//            canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+//            float y = 48f;
+//            for (int j = 0; j < 35; j++) {
+//                for (int k = 0; k < 6; k++) {
+//                    canvas.drawText("奥斯卡", i + k * 150, y, paint);
+//                }
+//                y += 48f;
+//            }
+//            surface.unlockCanvasAndPost(canvas);
+//            i += 10f;
+//            if (i > 1080f) {
+//                i = - 1080f;
+//            }
+//            try {
+//                Thread.sleep(10);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//                break;
+//            }
         }//end while
         videoCodec.stop();
         videoCodec.release();

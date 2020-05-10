@@ -153,7 +153,7 @@ public class SpiltVideoPlayer extends Thread implements SurfaceTexture.OnFrameAv
     }
 
     private void draw() {
-        shaderProgram.run();
+        shaderProgram.execute();
     }
 
     private void render() {

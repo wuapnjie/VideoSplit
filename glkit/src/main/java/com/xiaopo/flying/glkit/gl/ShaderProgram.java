@@ -50,7 +50,7 @@ public abstract class ShaderProgram {
 
     public abstract void prepare();
 
-    public abstract void run();
+    public abstract void execute();
 
     public void release() {
         int[] bufferIds = new int[vboIds.size()];

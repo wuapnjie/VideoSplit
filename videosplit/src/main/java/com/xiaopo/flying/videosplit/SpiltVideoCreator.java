@@ -173,7 +173,7 @@ class SpiltVideoCreator extends Thread implements SurfaceTexture.OnFrameAvailabl
     }
 
     private void draw() {
-        shaderProgram.run();
+        shaderProgram.execute();
     }
 
     private boolean started = true;
